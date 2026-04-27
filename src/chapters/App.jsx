@@ -38,7 +38,7 @@ function Sidebar({ current, setCurrent, progress, reduceMotion, setReduceMotion,
         <div className="sb-mark">DE</div>
         <div>
           <div className="sb-brand-title">DE Fundamentals</div>
-          <div className="sb-brand-sub">v6 · Industry standard</div>
+          <div className="sb-brand-sub">Interactive course</div>
         </div>
       </div>
 
@@ -152,19 +152,19 @@ function App() {
     "gridOpacity": 100
   }/*EDITMODE-END*/;
 
-  const [current, setCurrent] = useState(() => localStorage.getItem('de-v6-chap') || 'home');
-  const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('de-v6-prog') || '{}'));
-  const [internalMode, setInternalMode] = useState(() => localStorage.getItem('de-v6-mm') === '1');
-  const [reduceMotion, setReduceMotion] = useState(() => localStorage.getItem('de-v6-rm') === '1');
+  const [current, setCurrent] = useState(() => localStorage.getItem('de-course-chap') || 'home');
+  const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('de-course-prog') || '{}'));
+  const [internalMode, setInternalMode] = useState(() => localStorage.getItem('de-course-mode') === '1');
+  const [reduceMotion, setReduceMotion] = useState(() => localStorage.getItem('de-course-rm') === '1');
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const contentRef = useRef(null);
 
   // Persist
-  useEffect(() => { localStorage.setItem('de-v6-chap', current); }, [current]);
-  useEffect(() => { localStorage.setItem('de-v6-prog', JSON.stringify(progress)); }, [progress]);
-  useEffect(() => { localStorage.setItem('de-v6-mm', internalMode ? '1' : '0'); }, [internalMode]);
-  useEffect(() => { localStorage.setItem('de-v6-rm', reduceMotion ? '1' : '0'); }, [reduceMotion]);
+  useEffect(() => { localStorage.setItem('de-course-chap', current); }, [current]);
+  useEffect(() => { localStorage.setItem('de-course-prog', JSON.stringify(progress)); }, [progress]);
+  useEffect(() => { localStorage.setItem('de-course-mode', internalMode ? '1' : '0'); }, [internalMode]);
+  useEffect(() => { localStorage.setItem('de-course-rm', reduceMotion ? '1' : '0'); }, [reduceMotion]);
 
   // Apply theme attrs to root
   useEffect(() => {

@@ -87,9 +87,8 @@ inevitable, governance exists at write-time because read-time is too late.
 
 Vanilla React 18 via CDN · Babel standalone · plain CSS · no bundler · no `npm install`.
 
-Everything lives in `src/v6/` (JSX per chapter) and `v6-styles.css`.
-Fork it, clone it, teach with it. The `README.txt` in the root has the full
-sanitization log if you're curious what was removed.
+Everything lives in `src/chapters/` (JSX per chapter) and `styles.css`.
+Fork it, clone it, teach with it.
 
 ---
 
