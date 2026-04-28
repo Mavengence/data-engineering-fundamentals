@@ -6,7 +6,7 @@ const CHAPTERS = [
   { id: 'home',   n: '-',   title: 'Overview',                sub: 'The pipeline, end to end',       time: '3 min',  hex: '#6B7787' },
   { id: 'fund',   n: '00',  title: 'Core Fundamentals',       sub: 'Storage, formats, engines',      time: '8 min',  hex: '#0F1729' },
   { id: 'ingest', n: '01',  title: 'Ingest',                  sub: 'Where data is born',             time: '9 min',  hex: '#7C5CFF' },
-  { id: 'stream', n: '02',  title: 'Streaming & Real-time',   sub: 'The bridge to the warehouse',    time: '7 min',  hex: '#22D3EE' },
+  { id: 'stream', n: '02',  title: 'Streaming',                sub: 'The bridge to the warehouse',    time: '7 min',  hex: '#22D3EE' },
   { id: 'store',  n: '03',  title: 'Store',                   sub: 'Where data lives',               time: '8 min',  hex: '#2D7DFF' },
   { id: 'comp',   n: '04',  title: 'Compute',                 sub: 'How data is read',               time: '9 min',  hex: '#FF7A59' },
   { id: 'orch',   n: '05',  title: 'Orchestrate',             sub: 'Airflow & idempotency',          time: '8 min',  hex: '#31A24C' },
@@ -31,18 +31,30 @@ const FONTS = [
   { id: 'general', name: 'General Sans',  stack: `'General Sans', -apple-system, sans-serif` },
 ];
 
-function Sidebar({ current, setCurrent, progress, reduceMotion, setReduceMotion, internalMode, setInternalMode }) {
+function Sidebar({ current, setCurrent, progress, collapsed, setCollapsed }) {
   return (
-    <aside className="sb">
+    <aside className={`sb ${collapsed ? 'collapsed' : ''}`}>
       <div className="sb-brand">
         <div className="sb-mark">DE</div>
-        <div>
-          <div className="sb-brand-title">DE Fundamentals</div>
-          <div className="sb-brand-sub">Interactive course</div>
-        </div>
+        {!collapsed && (
+          <div className="sb-brand-meta">
+            <div className="sb-brand-title">DE Fundamentals</div>
+            <div className="sb-brand-sub">Interactive course</div>
+          </div>
+        )}
+        <button
+          className="sb-collapse-btn"
+          onClick={() => setCollapsed(v => !v)}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar  ([)' : 'Collapse sidebar  ([)'}
+        >
+          <span className="sb-collapse-icon" aria-hidden="true">
+            {collapsed ? '›' : '‹'}
+          </span>
+        </button>
       </div>
 
-      <div className="sb-eyebrow">Course</div>
+      {!collapsed && <div className="sb-eyebrow">Course</div>}
       <nav className="sb-nav">
         {CHAPTERS.map((c) => {
           const done = progress[c.id];
@@ -51,12 +63,17 @@ function Sidebar({ current, setCurrent, progress, reduceMotion, setReduceMotion,
             <div key={c.id}
                  className={`sb-item ${active ? 'active' : ''} ${done && !active ? 'done' : ''}`}
                  style={{ '--ch-hex': c.hex }}
-                 onClick={() => setCurrent(c.id)}>
+                 onClick={() => setCurrent(c.id)}
+                 title={collapsed ? `${c.n} · ${c.title} · ${c.time}` : undefined}>
               <div className="sb-num">{c.n}</div>
-              <div className="sb-text">
-                <div className="sb-title">{c.title}</div>
-              </div>
-              <div className="sb-time">{c.time}</div>
+              {!collapsed && (
+                <>
+                  <div className="sb-text">
+                    <div className="sb-title">{c.title}</div>
+                  </div>
+                  <div className="sb-time">{c.time}</div>
+                </>
+              )}
             </div>
           );
         })}
@@ -156,6 +173,7 @@ function App() {
   const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('de-course-prog') || '{}'));
   const [internalMode, setInternalMode] = useState(() => localStorage.getItem('de-course-mode') === '1');
   const [reduceMotion, setReduceMotion] = useState(() => localStorage.getItem('de-course-rm') === '1');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('de-course-sb') === '1');
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const contentRef = useRef(null);
@@ -165,6 +183,7 @@ function App() {
   useEffect(() => { localStorage.setItem('de-course-prog', JSON.stringify(progress)); }, [progress]);
   useEffect(() => { localStorage.setItem('de-course-mode', internalMode ? '1' : '0'); }, [internalMode]);
   useEffect(() => { localStorage.setItem('de-course-rm', reduceMotion ? '1' : '0'); }, [reduceMotion]);
+  useEffect(() => { localStorage.setItem('de-course-sb', sidebarCollapsed ? '1' : '0'); }, [sidebarCollapsed]);
 
   // Apply theme attrs to root
   useEffect(() => {
@@ -208,6 +227,7 @@ function App() {
       else if (e.key === 'j') window.scrollBy({ top: 120, behavior: 'smooth' });
       else if (e.key === 'k') window.scrollBy({ top: -120, behavior: 'smooth' });
       else if (e.key === 't') setTweaksOpen(v => !v);
+      else if (e.key === '[') setSidebarCollapsed(v => !v);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -236,11 +256,11 @@ function App() {
   }, []);
 
   return (
-    <div className={`app ${reduceMotion ? 'reduce-motion' : ''}`}>
+    <div className={`app ${reduceMotion ? 'reduce-motion' : ''} ${sidebarCollapsed ? 'sb-collapsed' : ''}`}>
       <Sidebar current={current} setCurrent={goTo}
                progress={progress}
-               reduceMotion={reduceMotion} setReduceMotion={setReduceMotion}
-               internalMode={internalMode} setInternalMode={setInternalMode} />
+               collapsed={sidebarCollapsed}
+               setCollapsed={setSidebarCollapsed} />
       <div className="main">
         <TopBar chapter={chapter}
                 onPrev={onPrev} onNext={onNext}

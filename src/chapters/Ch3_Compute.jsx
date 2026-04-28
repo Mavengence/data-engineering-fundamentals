@@ -83,7 +83,7 @@ function ShuffleSim() {
                 <rect x={x - 30} y={y} width={60} height={h} rx={6} fill={col} opacity={barOpacity} />
                 <rect x={x - 30} y={420} width={60} height={14} rx={3} fill="var(--theme-gray-300)" />
                 {isOverloaded && (
-                  <text x={x} y={y - 8} textAnchor="middle" className="qp-overload-label">
+                  <text x={x} y={y - 28} textAnchor="middle" className="qp-overload-label">
                     OVERLOADED
                   </text>
                 )}
